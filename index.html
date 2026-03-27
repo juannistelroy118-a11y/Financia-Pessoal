@@ -2,172 +2,599 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Gestão Financeira</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finança Fácil - Controle Financeiro</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
     }
 
     .container {
-      max-width: 600px;
-      margin: 40px auto;
+      max-width: 800px;
+      margin: 0 auto;
       background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      animation: slideIn 0.3s ease-out;
     }
 
-    h1 {
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
       text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .saldo-container {
+      background: #f8f9fa;
+      padding: 20px;
+      border-bottom: 1px solid #e9ecef;
     }
 
     .saldo {
       text-align: center;
-      margin: 20px 0;
-      font-size: 24px;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .saldo-label {
+      font-size: 14px;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .saldo-valor {
+      font-size: 36px;
+      font-weight: bold;
+      color: #28a745;
+    }
+
+    .saldo-valor.negativo {
+      color: #dc3545;
+    }
+
+    .resumo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .resumo-card {
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .resumo-card.receitas {
+      border-left: 4px solid #28a745;
+    }
+
+    .resumo-card.despesas {
+      border-left: 4px solid #dc3545;
+    }
+
+    .resumo-titulo {
+      font-size: 12px;
+      color: #6c757d;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .resumo-valor {
+      font-size: 20px;
       font-weight: bold;
     }
 
-    form {
+    .resumo-valor.receitas {
+      color: #28a745;
+    }
+
+    .resumo-valor.despesas {
+      color: #dc3545;
+    }
+
+    .form-section {
+      padding: 30px;
+      background: white;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #495057;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn-adicionar {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-adicionar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .lista-section {
+      padding: 0 30px 30px 30px;
+      background: white;
+    }
+
+    .lista-header {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .lista-header h3 {
+      color: #495057;
+      font-size: 18px;
+    }
+
+    .filtros {
+      display: flex;
       gap: 10px;
     }
 
-    input, select, button {
-      padding: 10px;
-      font-size: 16px;
-    }
-
-    button {
-      background: #28a745;
-      color: white;
-      border: none;
+    .filtro-btn {
+      padding: 5px 12px;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 15px;
       cursor: pointer;
-      border-radius: 5px;
+      font-size: 12px;
+      transition: all 0.3s;
     }
 
-    button:hover {
-      background: #218838;
+    .filtro-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
     }
 
-    .lista {
-      margin-top: 20px;
+    .lista-transacoes {
+      max-height: 400px;
+      overflow-y: auto;
     }
 
     .item {
       display: flex;
       justify-content: space-between;
-      padding: 10px;
+      align-items: center;
+      padding: 15px;
       margin-bottom: 10px;
-      border-left: 5px solid;
-      background: #f9f9f9;
-      border-radius: 5px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      transition: transform 0.2s;
+      animation: slideIn 0.3s ease-out;
     }
 
-    .receita {
-      border-color: green;
+    .item:hover {
+      transform: translateX(5px);
     }
 
-    .despesa {
-      border-color: red;
+    .item-info {
+      flex: 1;
     }
 
-    .remover {
-      background: red;
+    .item-descricao {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 5px;
+    }
+
+    .item-data {
+      font-size: 11px;
+      color: #6c757d;
+    }
+
+    .item-valor {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 15px;
+    }
+
+    .item-valor.receita {
+      color: #28a745;
+    }
+
+    .item-valor.despesa {
+      color: #dc3545;
+    }
+
+    .btn-remover {
+      background: #dc3545;
       color: white;
       border: none;
-      padding: 5px 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
       cursor: pointer;
-      border-radius: 5px;
+      transition: all 0.3s;
     }
 
-    .remover:hover {
-      background: darkred;
+    .btn-remover:hover {
+      background: #c82333;
+      transform: scale(1.05);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #6c757d;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .acoes {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-acao {
+      flex: 1;
+      padding: 10px;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn-acao:hover {
+      background: #e9ecef;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 0;
+        border-radius: 0;
+      }
+      
+      .resumo {
+        grid-template-columns: 1fr;
+      }
+      
+      .item {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .item-valor {
+        margin: 10px 0;
+      }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>💰 Gestão Financeira</h1>
+  <div class="header">
+    <h1>💰 Finança Fácil</h1>
+    <p>Controle suas finanças de forma simples e eficiente</p>
+  </div>
 
-  <div class="saldo" id="saldo">Saldo: R$ 0.00</div>
+  <div class="saldo-container">
+    <div class="saldo">
+      <div class="saldo-label">Saldo Atual</div>
+      <div class="saldo-valor" id="saldo">R$ 0,00</div>
+    </div>
 
-  <form id="form">
-    <input type="text" id="descricao" placeholder="Descrição" required>
-    <input type="number" id="valor" placeholder="Valor" required>
-    <select id="tipo">
-      <option value="receita">Receita</option>
-      <option value="despesa">Despesa</option>
-    </select>
-    <button type="submit">Adicionar</button>
-  </form>
+    <div class="resumo">
+      <div class="resumo-card receitas">
+        <div class="resumo-titulo">Total Receitas</div>
+        <div class="resumo-valor receitas" id="totalReceitas">R$ 0,00</div>
+      </div>
+      <div class="resumo-card despesas">
+        <div class="resumo-titulo">Total Despesas</div>
+        <div class="resumo-valor despesas" id="totalDespesas">R$ 0,00</div>
+      </div>
+    </div>
+  </div>
 
-  <div class="lista" id="lista"></div>
+  <div class="form-section">
+    <form id="form">
+      <div class="form-group">
+        <label>Descrição</label>
+        <input type="text" id="descricao" placeholder="Ex: Salário, Conta de Luz..." required>
+      </div>
+      
+      <div class="form-group">
+        <label>Valor (R$)</label>
+        <input type="number" id="valor" placeholder="0,00" step="0.01" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="tipo">
+          <option value="receita">💰 Receita</option>
+          <option value="despesa">💸 Despesa</option>
+        </select>
+      </div>
+      
+      <button type="submit" class="btn-adicionar">Adicionar Transação</button>
+    </form>
+  </div>
+
+  <div class="lista-section">
+    <div class="lista-header">
+      <h3>📋 Histórico de Transações</h3>
+      <div class="filtros">
+        <button class="filtro-btn active" data-filtro="todos">Todos</button>
+        <button class="filtro-btn" data-filtro="receita">Receitas</button>
+        <button class="filtro-btn" data-filtro="despesa">Despesas</button>
+      </div>
+    </div>
+    
+    <div class="lista-transacoes" id="lista"></div>
+    
+    <div class="acoes">
+      <button class="btn-acao" id="exportarBtn">📥 Exportar Dados</button>
+      <button class="btn-acao" id="limparBtn">🗑️ Limpar Tudo</button>
+    </div>
+  </div>
 </div>
 
 <script>
+  let transacoes = JSON.parse(localStorage.getItem('transacoes')) || [];
+  let filtroAtual = 'todos';
+
   const form = document.getElementById('form');
   const lista = document.getElementById('lista');
   const saldoEl = document.getElementById('saldo');
-
-  let transacoes = JSON.parse(localStorage.getItem('transacoes')) || [];
+  const totalReceitasEl = document.getElementById('totalReceitas');
+  const totalDespesasEl = document.getElementById('totalDespesas');
 
   function salvar() {
     localStorage.setItem('transacoes', JSON.stringify(transacoes));
   }
 
-  function atualizarTela() {
-    lista.innerHTML = '';
-    let saldo = 0;
+  function formatarMoeda(valor) {
+    return valor.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  }
 
-    transacoes.forEach((t, index) => {
-      const div = document.createElement('div');
-      div.classList.add('item', t.tipo);
+  function formatarData() {
+    const now = new Date();
+    return now.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 
+  function calcularTotais() {
+    let totalReceitas = 0;
+    let totalDespesas = 0;
+    
+    transacoes.forEach(t => {
       if (t.tipo === 'receita') {
-        saldo += t.valor;
+        totalReceitas += t.valor;
       } else {
-        saldo -= t.valor;
+        totalDespesas += t.valor;
       }
+    });
+    
+    const saldo = totalReceitas - totalDespesas;
+    
+    saldoEl.textContent = formatarMoeda(saldo);
+    saldoEl.classList.toggle('negativo', saldo < 0);
+    totalReceitasEl.textContent = formatarMoeda(totalReceitas);
+    totalDespesasEl.textContent = formatarMoeda(totalDespesas);
+    
+    return { totalReceitas, totalDespesas, saldo };
+  }
 
-      div.innerHTML = `
-        <span>${t.descricao} - R$ ${t.valor.toFixed(2)}</span>
-        <button class="remover" onclick="remover(${index})">X</button>
+  function atualizarTela() {
+    const transacoesFiltradas = filtroAtual === 'todos' 
+      ? transacoes 
+      : transacoes.filter(t => t.tipo === filtroAtual);
+    
+    if (transacoesFiltradas.length === 0) {
+      lista.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <p>Nenhuma transação encontrada</p>
+          <small>Adicione sua primeira transação acima</small>
+        </div>
       `;
-
+      calcularTotais();
+      return;
+    }
+    
+    lista.innerHTML = '';
+    
+    transacoesFiltradas.forEach((t, index) => {
+      const div = document.createElement('div');
+      div.classList.add('item');
+      
+      const valorFormatado = formatarMoeda(t.valor);
+      const valorClass = t.tipo === 'receita' ? 'receita' : 'despesa';
+      const tipoIcon = t.tipo === 'receita' ? '💰' : '💸';
+      
+      div.innerHTML = `
+        <div class="item-info">
+          <div class="item-descricao">${tipoIcon} ${escapeHtml(t.descricao)}</div>
+          <div class="item-data">${t.data || 'Data não registrada'}</div>
+        </div>
+        <div class="item-valor ${valorClass}">${valorFormatado}</div>
+        <button class="btn-remover" onclick="remover(${getOriginalIndex(index)})">✗</button>
+      `;
+      
       lista.appendChild(div);
     });
-
-    saldoEl.innerText = `Saldo: R$ ${saldo.toFixed(2)}`;
+    
+    calcularTotais();
+  }
+  
+  function getOriginalIndex(filteredIndex) {
+    const transacoesFiltradas = filtroAtual === 'todos' 
+      ? transacoes 
+      : transacoes.filter(t => t.tipo === filtroAtual);
+    
+    const transacao = transacoesFiltradas[filteredIndex];
+    return transacoes.findIndex(t => t.id === transacao.id);
+  }
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   function remover(index) {
-    transacoes.splice(index, 1);
-    salvar();
-    atualizarTela();
+    if (confirm('Tem certeza que deseja remover esta transação?')) {
+      transacoes.splice(index, 1);
+      salvar();
+      atualizarTela();
+    }
+  }
+
+  function limparTudo() {
+    if (confirm('⚠️ Tem certeza que deseja limpar todas as transações? Esta ação não poderá ser desfeita!')) {
+      transacoes = [];
+      salvar();
+      atualizarTela();
+    }
+  }
+
+  function exportarDados() {
+    const dados = {
+      exportadoEm: new Date().toISOString(),
+      transacoes: transacoes,
+      totais: calcularTotais()
+    };
+    
+    const dataStr = JSON.stringify(dados, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `financas_${new Date().toISOString().slice(0,19)}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
   }
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-
-    const descricao = document.getElementById('descricao').value;
+    
+    const descricao = document.getElementById('descricao').value.trim();
     const valor = parseFloat(document.getElementById('valor').value);
     const tipo = document.getElementById('tipo').value;
-
-    if (!descricao || !valor) return;
-
-    transacoes.push({ descricao, valor, tipo });
-
+    
+    if (!descricao) {
+      alert('Por favor, insira uma descrição');
+      return;
+    }
+    
+    if (isNaN(valor) || valor <= 0) {
+      alert('Por favor, insira um valor válido maior que zero');
+      return;
+    }
+    
+    const transacao = {
+      id: Date.now(),
+      descricao: descricao,
+      valor: valor,
+      tipo: tipo,
+      data: formatarData()
+    };
+    
+    transacoes.push(transacao);
     salvar();
     atualizarTela();
-
     form.reset();
+    document.getElementById('descricao').focus();
   });
+
+  document.querySelectorAll('.filtro-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filtroAtual = btn.dataset.filtro;
+      atualizarTela();
+    });
+  });
+
+  document.getElementById('limparBtn').addEventListener('click', limparTudo);
+  document.getElementById('exportarBtn').addEventListener('click', exportarDados);
 
   atualizarTela();
 </script>
