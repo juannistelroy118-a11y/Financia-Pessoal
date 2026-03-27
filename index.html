@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestão Financeira</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .saldo {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: #218838;
+    }
+
+    .lista {
+      margin-top: 20px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 5px solid;
+      background: #f9f9f9;
+      border-radius: 5px;
+    }
+
+    .receita {
+      border-color: green;
+    }
+
+    .despesa {
+      border-color: red;
+    }
+
+    .remover {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .remover:hover {
+      background: darkred;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>💰 Gestão Financeira</h1>
+
+  <div class="saldo" id="saldo">Saldo: R$ 0.00</div>
+
+  <form id="form">
+    <input type="text" id="descricao" placeholder="Descrição" required>
+    <input type="number" id="valor" placeholder="Valor" required>
+    <select id="tipo">
+      <option value="receita">Receita</option>
+      <option value="despesa">Despesa</option>
+    </select>
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <div class="lista" id="lista"></div>
+</div>
+
+<script>
+  const form = document.getElementById('form');
+  const lista = document.getElementById('lista');
+  const saldoEl = document.getElementById('saldo');
+
+  let transacoes = JSON.parse(localStorage.getItem('transacoes')) || [];
+
+  function salvar() {
+    localStorage.setItem('transacoes', JSON.stringify(transacoes));
+  }
+
+  function atualizarTela() {
+    lista.innerHTML = '';
+    let saldo = 0;
+
+    transacoes.forEach((t, index) => {
+      const div = document.createElement('div');
+      div.classList.add('item', t.tipo);
+
+      if (t.tipo === 'receita') {
+        saldo += t.valor;
+      } else {
+        saldo -= t.valor;
+      }
+
+      div.innerHTML = `
+        <span>${t.descricao} - R$ ${t.valor.toFixed(2)}</span>
+        <button class="remover" onclick="remover(${index})">X</button>
+      `;
+
+      lista.appendChild(div);
+    });
+
+    saldoEl.innerText = `Saldo: R$ ${saldo.toFixed(2)}`;
+  }
+
+  function remover(index) {
+    transacoes.splice(index, 1);
+    salvar();
+    atualizarTela();
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const descricao = document.getElementById('descricao').value;
+    const valor = parseFloat(document.getElementById('valor').value);
+    const tipo = document.getElementById('tipo').value;
+
+    if (!descricao || !valor) return;
+
+    transacoes.push({ descricao, valor, tipo });
+
+    salvar();
+    atualizarTela();
+
+    form.reset();
+  });
+
+  atualizarTela();
+</script>
+
+</body>
+</html>
